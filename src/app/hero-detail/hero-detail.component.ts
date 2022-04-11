@@ -1,9 +1,8 @@
-import { Component, OnInit, Input } from '@angular/core';
-
-import { Hero } from '../hero';
-
+import { Component, OnInit } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
 import { Location } from '@angular/common';
+
+import { Hero } from '../hero';
 import { HeroService } from '../hero.service';
 
 @Component({
@@ -16,8 +15,8 @@ export class HeroDetailComponent implements OnInit {
   hero: Hero | undefined;
   constructor(
     private route: ActivatedRoute,
-    private location: Location,
-    private heroService: HeroService
+    private heroService: HeroService,
+    private location: Location
   ) {}
 
   ngOnInit(): void {
@@ -28,12 +27,18 @@ export class HeroDetailComponent implements OnInit {
 
   // The paramMap is a dictionary of route parameter values extracted from the URL. The "id" key returns the id of the hero to fetch.
   getHero(): void {
-    const id = Number(this.route.snapshot.paramMap.get('id'));
+    const id = parseInt(this.route.snapshot.paramMap.get('id')!, 10);
     this.heroService.getHero(id).subscribe((hero) => (this.hero = hero));
   }
 
   // to go back one step in the history to the previous page
   goBack(): void {
     this.location.back();
+  }
+
+  save(): void {
+    if (this.hero) {
+      this.heroService.updateHero(this.hero).subscribe(() => this.goBack());
+    }
   }
 }
